@@ -1,7 +1,7 @@
-const {users} = require('../models');
+const {users, Sequelize} = require('../models');
 const bcrypt = require('bcrypt');
-// const jwt = require("jsonwebtoken");
-// const Op = Sequelize.Op;
+const jwt = require("jsonwebtoken");
+const Op = Sequelize.Op;
 
 module.exports={
     signUp: (req,res) => {
@@ -35,31 +35,33 @@ module.exports={
                 [Op.or] : [
                     {username : body.username},
                     {email : body.username}
-                ]
-            }
-        })
+                ],
 
-
+            },
+        });
         if(findUser === null){
             res.status(404).send({
-                msg: "Sign in is error",
+                msg: "sign in is error",
                 status: 404,
-                error : "user not found"
-            })
+                error: 'user not found'
+            });
+            
         }
-        const isValidPassword = bcrypt.compareSync(body.password, findUser.dataValues.password)
+        const isValidPassword = bcrypt.compareSync(body.password, findUser.dataValues.password);
 
         if(!isValidPassword){
             res.status(403).send({
-                msg: "sign in is error",
-                status : 403,
+                msg: "Sign in is error",
+                status: 403,
                 error : "password is invalid"
             })
         }
+         
         const payload = {
             id : findUser.dataValues.id,
             email : findUser.dataValues.email,
         }
+
         const token = jwt.sign(payload, process.env.SECRET_KEY,{
             expiresIn : 86400
         })
@@ -72,6 +74,10 @@ module.exports={
             data : {...findUser.dataValues,token}
         })
 
+    
+
+
+        
     }
 
 }
