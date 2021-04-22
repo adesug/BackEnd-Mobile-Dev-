@@ -1,9 +1,11 @@
 require('dotenv').config({});
 const express = require('express');
+const mainRoutes = require('./src/routes')
 const app = express();
 const port = process.env.port || 3001;
 
-const mainRoutes = require('./src/routes');
+//const mainRoutes = require('./src/routes');
+
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
